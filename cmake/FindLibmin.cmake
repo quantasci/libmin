@@ -36,7 +36,7 @@ else ()
 
     #-- Paths
 	set ( LIBMIN_INC_DIR "${LIBMIN_INSTALL}/include" CACHE PATH "Path to include files" FORCE)
-        set ( LIBMIN_LIB_DIR "${LIBMIN_INSTALL}/bin" CACHE PATH "Path to libraries" FORCE)
+    set ( LIBMIN_LIB_DIR "${LIBMIN_INSTALL}/bin" CACHE PATH "Path to libraries" FORCE)
 	set ( LIBMIN_SRC_DIR "${LIBMIN_INSTALL}/src" CACHE PATH "Path to libraries" FORCE)
 	set ( LIBMIN_GLEW_DIR "${LIBMIN_INSTALL}/GL" CACHE PATH "Path to glew.c" FORCE)
 	
@@ -45,7 +45,7 @@ else ()
     set ( OK_H "0" )
 	_FIND_FILE ( LIBMIN_FILES LIBMIN_INC_DIR "common_defs.h" "common_defs.h" OK_H )	
 	_FIND_FILE ( LIBMIN_FILES LIBMIN_INC_DIR "vec.h" "vec.h" OK_H )
-	_FIND_FILE ( LIBMIN_FILES LIBMIN_INC_DIR "timex.h" "timex.h" OK_H )
+	_FIND_FILE ( LIBMIN_FILES LIBMIN_INC_DIR "timex.h" "timex.h" OK_H )	
 	if ( OK_H EQUAL 3 )
 	    message ( STATUS "  Found. Libhelp header files. ${LIBMIN_INCLUDE_DIR}" )
 	else()
