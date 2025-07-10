@@ -34,14 +34,12 @@ int main(int argc, char** argv)
         _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG | _CRTDBG_MODE_WNDW);
     #endif
 
-    dbgprintf ("Starting.\n" );
     pApp->startup();                        //-- App startup
     
     pApp->appHandleArgs( argc, argv );    //-- App handles args
     
     pApp->m_running = true;  
 
-    dbgprintf ("Running..\n" );
     while (pApp->m_running) {
 
         pApp->appRun();     //-- Run app
@@ -63,7 +61,6 @@ int main(int argc, char** argv)
 
 Application::Application() : m_renderCnt(1), m_win(0), m_debugFilter(0)
 {
-    dbgprintf("Application (constructor)\n");
     pApp = this;        // global handle
     m_mouseX = -1;
     m_mouseY = -1;

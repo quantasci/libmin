@@ -444,7 +444,7 @@ bool strParseOutStr (std::string str, std::string lstr, std::string rstr, std::s
 
   fL = f1 + lstr.length();
   value = str.substr(fL, fR - fL);
-  remain = str.substr(0, f1) + str.substr(fR + 1);  // parse away the separators
+  remain = str.substr(0, f1) + str.substr(fR);  // parse away the separators
   return true;
 }
 
