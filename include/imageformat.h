@@ -35,30 +35,30 @@
 
 		// Interface functions (called by Image)	
 		virtual std::string UsesExt() { return ""; }
-		virtual bool Load (char *filename, ImageX* img) {return false;}
-		virtual bool Save (char *filename, ImageX* img) {return false;}		
+		virtual bool Load (std::string filename, ImageX* img) {return false;}
+		virtual bool Save (std::string filename, ImageX* img) {return false;}		
 		virtual bool CanLoadType ( unsigned char* magic, std::string ext ) { return false; }
 		virtual bool CanSaveType ( std::string ext )		{ return false; }
 		virtual void SetQuality (int q)									{m_quality= q;}
 		virtual ImageOp::FormatStatus LoadIncremental () {return ImageOp::LoadNotReady;}		
 
 		// Helper functions 
-		void StartFormat ( char* filename, ImageX* img, ImageOp::FormatStatus status );		
+		void StartFormat ( std::string filename, ImageX* img, ImageOp::FormatStatus status );		
 		std::string GetStatusMsg ();
 		ImageOp::FormatStatus GetStatus ()	{ return m_eStatus; }
 
 	public:
-		ImageX*				m_pImg;				// Image (ImageFormat does not own it)		
-		
-		char					m_Filename[FILE_NAMELEN];
-		ImageOp::FormatStatus 	m_eStatus;		
-		bool					m_incremental;
-		int						m_quality;
+		ImageX*                 m_pImg;  // Image (ImageFormat does not own it)
 
-		// General format data		
-		int						m_xres, m_yres;		
-		int						m_bpr;
-		int						m_bpp;
+		std::string             m_Filename;
+		ImageOp::FormatStatus   m_eStatus;
+		bool                    m_incremental;
+		int                     m_quality;
+
+		// General format data
+		int  m_xres, m_yres;
+		int  m_bpr;
+		int  m_bpp;
 	};
 
 

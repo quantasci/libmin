@@ -124,12 +124,12 @@
 		}
 
 		// Image Loading & Saving
-		bool Load(char* filename, char* alphaname);
+		bool Load(const char* filename, const char* alphaname);
 		bool Load(std::string filename, std::string& errmsg);		
-		bool LoadAlpha(char* filename);
-		bool LoadIncremental(char* filename);
+		bool LoadAlpha(const char* filename);
+		bool LoadIncremental(const char* filename);
 		ImageOp::FormatStatus LoadNextRow();
-		bool Save(char* filename);								// Save Image
+		bool Save(const char* filename);								// Save Image
 		void SetupFormats();
 
 		//--- format-specific load/save (not supported)

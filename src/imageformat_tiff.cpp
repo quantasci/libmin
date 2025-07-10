@@ -82,7 +82,7 @@ CImageFormatTiff::CImageFormatTiff () : CImageFormat()
 //		m_num_strips		Number of strips
 //		m_rps				Rows per strip
 //
-bool CImageFormatTiff::Load (char *filename, ImageX* img )
+bool CImageFormatTiff::Load (std::string filename, ImageX* img )
 {
 	StartFormat ( filename, img, ImageOp::Loading );
 
@@ -90,7 +90,10 @@ bool CImageFormatTiff::Load (char *filename, ImageX* img )
 
 	if ( m_DebugTif )	dbgprintf ("----- TIFF LOADING: %s\n", filename );
 
-	m_Tif = fopen ( filename, "rb" );	
+        char fname[2048];
+        strncpy ( fname, filename.c_str(), 2048) ;
+
+	m_Tif = fopen ( fname, "rb" );	
 	if ( m_Tif == 0x0 ) {
 		m_eStatus = ImageOp::FileNotFound;		
 		return false;
@@ -913,11 +916,14 @@ bool CImageFormatTiff::SaveTiffDirectory ()
 //   TIF: BPC Blue:  8
 //
 
-bool CImageFormatTiff::Save (char *filename, ImageX* img )
+bool CImageFormatTiff::Save (std::string filename, ImageX* img )
 {
 	StartFormat ( filename, img, ImageOp::Saving );
 
-	m_Tif = fopen ( filename, "wb" );
+        char fname[2048];
+        strncpy ( fname, filename.c_str(), 2048) ;
+
+	m_Tif = fopen ( fname, "wb" );
 	if ( m_Tif == 0x0 ) { 
 		dbgprintf ( "ERROR: Unable to create TIF file %s\n", filename );
 		return false;

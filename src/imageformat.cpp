@@ -232,15 +232,11 @@ std::string CImageFormat::GetStatusMsg ()
 	return msg;
 }
 
-void CImageFormat::StartFormat ( char* filename, ImageX* img, ImageOp::FormatStatus status )
+void CImageFormat::StartFormat ( std::string filename, ImageX* img, ImageOp::FormatStatus status )
 {
 	// set ImageFormat targets
 	m_pImg = img;
 	m_eStatus = status;
-	#ifdef WIN32
-		strcpy_s ( m_Filename, FILE_NAMELEN, filename);
-	#else
-		strcpy ( m_Filename, filename);
-	#endif
+        m_Filename = filename;
 }
 

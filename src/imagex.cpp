@@ -557,7 +557,7 @@ void ImageX::CopyIntoBuffer ( DataPtr& dest, DataPtr& src, int bpp, int w, int h
 	src.CopyTo ( &dest, DT_CPU );
 }
 
-bool ImageX::LoadAlpha ( char *filename )
+bool ImageX::LoadAlpha ( const char *filename )
 {
 	ImageX ctrl;
 	ImageX alpha_img ( 0, 0, ImageOp::RGBA8 );
@@ -575,7 +575,7 @@ bool ImageX::LoadAlpha ( char *filename )
 	return true;
 }
 
-bool ImageX::LoadIncremental ( char *filename )
+bool ImageX::LoadIncremental (const char *filename )
 {
 
 	/*
@@ -614,7 +614,7 @@ ImageOp::FormatStatus ImageX::LoadNextRow ()
 	return ImageOp::LoadDone;
 }
 
-bool ImageX::Load (char* filename, char* alphaname )
+bool ImageX::Load (const char* filename, const char* alphaname )
 {
 	std::string errmsg;
 	Load ( filename, errmsg );
@@ -736,7 +736,7 @@ bool ImageX::Load ( std::string filename, std::string& errmsg)
 }
 
 
-bool ImageX::Save (char *filename)
+bool ImageX::Save (const char *filename)
 {
 	std::string fname = filename;
 	std::string fext = fname.substr ( fname.length()-3, 3 );
@@ -748,7 +748,7 @@ bool ImageX::Save (char *filename)
 	bool saved = false;
 	for (int n=0; n < gImageFormats.size() && !saved; n++) {
 		if ( gImageFormats[n]->CanSaveType ( fext ) ) {
-			if ( gImageFormats[n]->Save ( filename, this ) ) {
+			if ( gImageFormats[n]->Save ( fname, this ) ) {
 				saved = true;
 			} else {
 				saved = false;

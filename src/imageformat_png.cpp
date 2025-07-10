@@ -41,16 +41,18 @@ extern "C" {
    }
 }*/
 
-bool CImageFormatPng::Load (char *filename, ImageX* img )
+bool CImageFormatPng::Load (std::string filename, ImageX* img )
 {
 	StartFormat ( filename, img, ImageOp::Loading );
 
 	bool bGrey = false;
 
 	//-------------------------- Using PNG helpers
+        char fname[2048];
+        strncpy ( fname, filename.c_str(), 2048);
 	std::vector<unsigned char> out;
 	unsigned int nx, ny;
-	unsigned error = lodepng::decode( out, nx, ny, filename, (bGrey ? LCT_GREY : LCT_RGBA), (bGrey ? 16 : 8));
+	unsigned error = lodepng::decode( out, nx, ny, fname, (bGrey ? LCT_GREY : LCT_RGBA), (bGrey ? 16 : 8));
 
 	if (error) {
 		//nvprintf("png read error: %s\n", lodepng_error_text(error));
@@ -80,7 +82,7 @@ bool CImageFormatPng::Load (char *filename, ImageX* img )
 }
 
 
-bool CImageFormatPng::Save (char *filename, ImageX* img )
+bool CImageFormatPng::Save (std::string filename, ImageX* img )
 {
 	StartFormat ( filename, img, ImageOp::Saving );
 
@@ -93,8 +95,10 @@ bool CImageFormatPng::Save (char *filename, ImageX* img )
 	case ImageOp::RGB8: ch = 3; break;
 	case ImageOp::RGBA8: ch = 4; break;
 	};
+        char fname[2048];
+        strncpy ( fname, filename.c_str(), 2048);
 
-	save_png ( filename, m_pImg->GetData(), m_pImg->GetWidth(), m_pImg->GetHeight(), ch );
+	save_png ( fname, m_pImg->GetData(), m_pImg->GetWidth(), m_pImg->GetHeight(), ch );
 
 	return true;
 	

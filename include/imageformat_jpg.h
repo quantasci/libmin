@@ -37,8 +37,8 @@
 	public:		
 		CImageFormatJpg ();
 
-		virtual bool Load (char *filename, ImageX* img);
-		virtual bool Save (char *filename, ImageX* img);		
+		virtual bool Load (std::string filename, ImageX* img);
+		virtual bool Save (std::string filename, ImageX* img);		
 
 		virtual std::string UsesExt() { return "jpg"; }
 
