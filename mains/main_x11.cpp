@@ -360,7 +360,6 @@ static int translateKey(XEvent &evt, bool& printableKey)
 
 Application::Application() : m_renderCnt(1), m_win(0), m_debugFilter(0)
 {
-    dbgprintf("Application (constructor)\n");
     pApp = this;        // global handle
     m_mouseX = -1;
     m_mouseY = -1;
