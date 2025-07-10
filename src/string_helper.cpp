@@ -414,10 +414,10 @@ std::string strParseOutDelim ( std::string& str, std::string lsep, std::string r
   return value;
 }
 
-bool strParseOutDelim ( std::string str, std::string lseps, std::string rseps, std::string& value, std::string& remain)
+bool strParseOutDelim ( std::string str, std::string lseps, std::string rseps, std::string& outvalue, std::string& remain)
 {
   size_t f1, fL, fR;
-  value = "";
+  outvalue = "";
   remain = str;
 
   f1 = str.find_first_of ( lseps );              // find separators
@@ -426,25 +426,28 @@ bool strParseOutDelim ( std::string str, std::string lseps, std::string rseps, s
   if ( fR == std::string::npos ) return false;
 
   fL = f1 + 1;                                    // separators are single chars
-  value = str.substr ( fL, fR-fL );
+  outvalue = str.substr ( fL, fR-fL );
   remain = str.substr ( 0, f1 ) + str.substr ( fR+1 );  // parse away the separators
   return true;
 }
 
-bool strParseOutStr (std::string str, std::string lstr, std::string rstr, std::string& value, std::string& remain)
+
+bool strParseOutStr (std::string str, std::string lstr, std::string rstr, std::string& outvalue, std::string& remain)
 {
   size_t f1, fL, fR;
-  value = "";
-  remain = str;
+  outvalue = "";
 
   f1 = str.find (lstr);              // find separators
-  if (f1 == std::string::npos) return false;
+  if (f1 == std::string::npos) {remain = str; return false;}
   fR = str.find (rstr, f1 + lstr.length() );
-  if (fR == std::string::npos) return false;
+  if (fR == std::string::npos) {remain = str; return false; }
 
   fL = f1 + lstr.length();
-  value = str.substr(fL, fR - fL);
-  remain = str.substr(0, f1) + str.substr(fR);  // parse away the separators
+  outvalue = str.substr(fL, fR - fL);
+  remain = str.substr(0, f1);
+  if (fR + rstr.length() < str.length()) {
+    remain += str.substr(fR + rstr.length() );
+  }
   return true;
 }
 
@@ -454,10 +457,10 @@ bool strParseOutStr (std::string str, std::string lstr, std::string rstr, std::s
 // - this func CONSUMES the left-separator. there is no rsep.
 // e.g. "EVAL(date=VEC4) | more" --> value "VEC4", remain="EVAL(date) | more"
 //
-bool strParseChars(std::string str, std::string lsep, std::string& value, std::string& remain)
+bool strParseChars(std::string str, std::string lsep, std::string& outvalue, std::string& remain)
 {
   size_t f1, fL, fR;
-  value = "";
+  outvalue = "";
   remain = str;
 
   f1 = str.find_first_of(lsep);              // find separators
@@ -466,11 +469,11 @@ bool strParseChars(std::string str, std::string lsep, std::string& value, std::s
   fR = str.find_first_not_of ( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789", f1+1 );
   if (fR == std::string::npos) {
     // nothing to the right
-    value = str.substr(fL);             
+    outvalue = str.substr(fL);
     remain = str.substr(0, f1);    
   } else {
     // keep stuff to the left & right
-    value = str.substr(fL, fR - fL);
+    outvalue = str.substr(fL, fR - fL);
     remain = str.substr(0, f1) + str.substr(fR);    // parse away left sep
   }  
   return true;

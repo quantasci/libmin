@@ -975,7 +975,9 @@ void glib::selfSetModelMtx ( Matrix4F& mtx )
 }
 void glib::selfSetModel3D(Matrix4F& model)
 {
-	glUniformMatrix4fv(gx.mPARAM[S3D][SP_MODEL], 1, GL_FALSE, model.GetDataF());
+	#ifdef BUILD_OPENGL
+		glUniformMatrix4fv(gx.mPARAM[S3D][SP_MODEL], 1, GL_FALSE, model.GetDataF());
+	#endif
 }
 
 
@@ -1085,7 +1087,9 @@ void gxLib::destroySets()
 			s->geom = (char*) malloc(256);		// reset to small size
 		}
 		if (s->vbo != 0) {
-			glDeleteBuffers( 1, (GLuint*) &s->vbo);
+			#ifdef BUILD_OPENGL
+				glDeleteBuffers( 1, (GLuint*) &s->vbo);
+			#endif	
 			s->vbo = 0;
 		}
 	}
@@ -1194,7 +1198,7 @@ gxVert3D* gxLib::allocGeom3D (int cnt, uchar prim, ImageX* img )
 
 void gxLib::createShader2D ()
 {
-	#ifdef USE_OPENGL
+	#ifdef BUILD_OPENGL
 		// OpenGL - Create shaders
 		char buf[16384];
 		int len = 0;
@@ -1609,29 +1613,33 @@ void gxLib::destroy()
 	m_font_img.Clear();
 
 	dbgprintf("destroy2D. Shaders.\n");
-	// remove 2D shaders
-	glDetachShader(mSH[S2D], mVS[S2D]);
-	glDetachShader(mSH[S2D], mFS[S2D]);
-	glDeleteShader(mVS[S2D]); 
-	glDeleteShader(mFS[S2D]);
-	// remove 3D shaders
-	glDetachShader(mSH[S3D], mVS[S3D]);
-	glDetachShader(mSH[S3D], mFS[S3D]);	
-	glDeleteShader(mVS[S3D]); 
-	glDeleteShader(mFS[S3D]);
-	mVS[S2D] = 0; mFS[S2D] = 0;
-	mVS[S3D] = 0; mFS[S3D] = 0;
 
-	// delete programs
-	dbgprintf("destroy2D. SH2: %d, SH3: %d, VAO: %d\n", mSH[S2D], mSH[S3D], mVAO);
-	glDeleteProgram(mSH[S3D]);
-	glDeleteProgram(mSH[S2D]);
-	mSH[S3D] = 0;
-	mSH[S2D] = 0;
+	#ifdef BUILD_OPENGL
+		// remove 2D shaders
+		glDetachShader(mSH[S2D], mVS[S2D]);
+		glDetachShader(mSH[S2D], mFS[S2D]);
+		glDeleteShader(mVS[S2D]); 
+		glDeleteShader(mFS[S2D]);
+		// remove 3D shaders
+		glDetachShader(mSH[S3D], mVS[S3D]);
+		glDetachShader(mSH[S3D], mFS[S3D]);	
+		glDeleteShader(mVS[S3D]); 
+		glDeleteShader(mFS[S3D]);
+		mVS[S2D] = 0; mFS[S2D] = 0;
+		mVS[S3D] = 0; mFS[S3D] = 0;
+
+		// delete programs
+		dbgprintf("destroy2D. SH2: %d, SH3: %d, VAO: %d\n", mSH[S2D], mSH[S3D], mVAO);
+		glDeleteProgram(mSH[S3D]);
+		glDeleteProgram(mSH[S2D]);
+		mSH[S3D] = 0;
+		mSH[S2D] = 0;
 	
-	// delete VAO
-	glDeleteVertexArrays(1, (GLuint*)&mVAO);
-	mVAO = 0;
+		// delete VAO
+		glDeleteVertexArrays(1, (GLuint*)&mVAO);
+		mVAO = 0;
+
+	#endif
 
 }
 
@@ -1854,16 +1862,12 @@ void gxLib::drawSet ( int g )
 			pos += cnt * elem_sz;	
 		}
 	}
-	#ifdef EXTRA_CHECKS
-		checkGL ( "drawSet stream");
-	#endif
+	#ifdef BUILD_OPENGL		
+		checkGL ( "drawSet stream");		
 
-	// stop using shader
-	#ifdef BUILD_OPENGL
-		glUseProgram ( 0 );
-		#ifdef EXTRA_CHECKS
-			checkGL ( "drawSet stop shader");
-		#endif
+		// stop using shader		
+		glUseProgram ( 0 );		
+		checkGL ( "drawSet stop shader");		
 	#endif
 
 	#ifdef _WIN32

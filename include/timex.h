@@ -177,7 +177,8 @@
 			TimeX ();
 			TimeX ( sjtime t )			{ m_CurrTime = t; }
 			TimeX ( int sec, int msec )	{ m_CurrTime = 0; SetTime ( sec, msec ); }
-		
+			bool operator<(const TimeX& other) const { return m_CurrTime < other.m_CurrTime; }
+
 			// Set time or date
 			bool SetTime ( int sec );									// Set seconds
 			bool SetTime ( int sec, int msec );				// Set seconds, msecs				
