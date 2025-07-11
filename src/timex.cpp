@@ -493,6 +493,29 @@
 		return true;
 	}
 
+	// Set date while keeping time
+	bool TimeX::SetDate(int mo, int day, int yr)
+	{
+		int hr, min, xm, xd, xy, sec, ms, ns;
+		GetTime (m_CurrTime, hr, min, xm, xd, xy, sec, ms, ns);
+		m_CurrTime = GetScaledJulianTime(hr, min, mo, day, yr, sec, ms, ns);
+		return true;
+	}
+	// Set time while keeping date
+	bool TimeX::SetTime(int hr, int min, int sec)
+	{
+		int xhr, xmin, m, d, y, xsec, ms, ns;
+		GetTime (m_CurrTime, xhr, xmin, m, d, y, xsec, ms, ns);		
+		m_CurrTime = GetScaledJulianTime( hr, min, m, d, y, sec, ms, ns );
+		return true;
+	}
+
+	void TimeX::Clear()
+	{ 
+		m_CurrTime = 0; 
+	}						
+	bool TimeX::isEmpty() { return m_CurrTime == 0; }
+
 	void TimeX::ClearTime()
 	{
 		// clear time to 00:00:00 while keep date, ie. goto start of day

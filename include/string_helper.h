@@ -61,11 +61,11 @@
 	HELPAPI std::string wsToStr ( const std::wstring& str );
 	HELPAPI std::wstring strToWs (const std::string& s);
 
-	HELPAPI bool strToVec(std::string& str, uchar lsep, uchar insep, uchar rsep, float* vec, int cpt = 3);
-	HELPAPI bool strToVec3(std::string& str, uchar lsep, uchar insep, uchar rsep, float* vec);
-	HELPAPI bool strToVec4(std::string& str, uchar lsep, uchar insep, uchar rsep, float* vec);
-	HELPAPI Vec3F strToVec3(std::string str, uchar sep);
-	HELPAPI Vec4F strToVec4(std::string str, uchar sep);		
+	HELPAPI bool strToVec(const std::string& str, char lsep, char insep, char rsep, float* vec, int vec_dim = 3);
+	HELPAPI bool strToVec3(const std::string& str, uchar lsep, uchar insep, uchar rsep, float* vec);
+	HELPAPI bool strToVec4(const std::string& str, uchar lsep, uchar insep, uchar rsep, float* vec);
+	HELPAPI Vec3F strToVec3(const std::string str, uchar sep);
+	HELPAPI Vec4F strToVec4(const std::string str, uchar sep);
 	HELPAPI std::string vecToStr ( Vec4F v );
 
 	//----------- Boolean returns
