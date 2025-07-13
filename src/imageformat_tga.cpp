@@ -170,7 +170,7 @@ void CImageFormatTga::writeGray( FILE *s, const unsigned char *externalImage, in
 
 
 
-bool CImageFormatTga::Load (char *filename, ImageX* img )
+bool CImageFormatTga::Load (const std::string filename, ImageX* img )
 {
 	StartFormat ( filename, img, ImageOp::Loading );
 
@@ -180,8 +180,11 @@ bool CImageFormatTga::Load (char *filename, ImageX* img )
     unsigned char info[7];
     FILE *tga = NULL;
     int size = 0;
+
+    char fname[2048];
+    strncpy (fname, filename.c_str(), 2048);
     
-    if( !(tga = fopen( filename, "rb" )) ) {
+    if( !(tga = fopen( fname, "rb" )) ) {
         m_eStatus = ImageOp::FileNotFound;
 		return false;
 	}

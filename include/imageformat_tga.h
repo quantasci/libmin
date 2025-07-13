@@ -22,7 +22,7 @@
 
 	class HELPAPI CImageFormatTga : public CImageFormat {
 	public:		
-		virtual bool Load (char *filename, ImageX* img);	
+		virtual bool Load (const std::string filename, ImageX* img);	
 
 		virtual std::string UsesExt() { return "tga"; }
 
