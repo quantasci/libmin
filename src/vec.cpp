@@ -689,7 +689,13 @@ double Vec4D::Length (void) { double n; n = (double) x*x + (double) y*y + (doubl
 
 // Constructors/Destructors
 
-Matrix4F::Matrix4F ( const float* src )	{ for (int n=0; n < 16; n++) data[n] = src[n]; }
+
+Matrix4F::Matrix4F (const float* mat)
+{
+  for (int n = 0; n < 16; n++)
+    data[n] = mat[n];  
+}
+
 Matrix4F::Matrix4F ( float f0, float f1, float f2, float f3, 
 							float f4, float f5, float f6, float f7, 
 							float f8, float f9, float f10, float f11,
@@ -811,13 +817,6 @@ Matrix4F& Matrix4F::Multiply (const Matrix4F& op1, const Matrix4F& op2)
 	data[14] = op2.data[12] * op1.data[2] + op2.data[13] * op1.data[6] + op2.data[14] * op1.data[10] + op2.data[15] * op1.data[14];
 	data[15] = op2.data[12] * op1.data[3] + op2.data[13] * op1.data[7] + op2.data[14] * op1.data[11] + op2.data[15] * op1.data[15];
 
-	return *this;
-}
-
-Matrix4F &Matrix4F::operator= (const float* op) 
-{
-	for (int n=0; n < 16; n++ )
-		data[n] = op[n];
 	return *this;
 }
 
@@ -1315,11 +1314,18 @@ Matrix4F &Matrix4F::operator= ( const Matrix4F& mat )
 	return *this;
 }
 
-Matrix4F &Matrix4F::operator= ( float* mat )
+Matrix4F &Matrix4F::operator= ( const float* mat )
 {
 	for (int n=0; n < 16; n++) 
 		data[n] = mat[n];	
 	return *this;
+}
+
+Matrix4F& Matrix4F::operator= (const double* mat)
+{
+  for (int n = 0; n < 16; n++)
+    data[n] = (float) mat[n];
+  return *this;
 }
 
 // Translate after (post-translate)

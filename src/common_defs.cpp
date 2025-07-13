@@ -110,28 +110,28 @@ std::string addSearchPath ( const char* path )
 }
 
 std::string addSearchPath(const std::string path)
-{   
-  std::string p = path;
+{ 
+  if (path.empty()) return "";
 
   // replace to match platform
+  std::string p = path;
   std::replace(p.begin(), p.end(), getPathDelimOpposite(), getPathDelim());
 
-  // every search path must be terminated with a delimiter. add one if needed
-  if (p.at(p.length() - 1) != getPathDelim()) {
-    p = p + getPathDelim();
+  // every search path must be terminated with a delimiter. add one if needed 
+  if (p.back() != getPathDelim()) {
+    p += getPathDelim();
   }
 
   // check for path existence  
   struct stat info;
-  char pathbuf[2048];
-  strncpy(pathbuf, p.c_str(), 2048);
-  bool exists = (stat(pathbuf, &info) == 0);
-  if (exists) {
+  char pathbuf[4096];
+  snprintf( pathbuf, sizeof(pathbuf), "%s", p.c_str() );
+  
+  if (stat(pathbuf, &info) == 0) {
     gPaths.push_back(p);
-  } else {
-    p = "";
-  }
-  return p;
+    return p;
+  } 
+  return "";
 }
 
 
@@ -352,7 +352,7 @@ void checkMem(xlong& total, xlong& used, xlong& app)
     
     //-------------------------------------------- Texture interface
 
-    //-- screen shader 
+    //-- texture compositing shader 
     static const char* g_tex_vertshader =
         "#version 300 es\n"
         "#extension GL_ARB_explicit_attrib_location : enable\n"
@@ -374,20 +374,53 @@ void checkMem(xlong& total, xlong& used, xlong& app)
         "  precision mediump int;\n"
         "uniform sampler2D uTex1;\n"
         "uniform sampler2D uTex2;\n"
+        "uniform sampler2DArray uTex3;\n"
+        "uniform int uLayer;\n"
         "uniform int uTexFlags;\n"
         "in vec3 vtc;\n"
         "layout(location = 0) out vec4 outColor;\n"
         "void main() {\n"
-        "   vec4 op1 = ((uTexFlags & 0x01)==0) ? texture ( uTex1, vtc.xy) : texture ( uTex1, vec2(vtc.x, 1.0f - vtc.y));\n"
+        "   vec4 op1, op2;\n"
+        "   op1 = ((uTexFlags & 0x01)==0) ? texture ( uTex1, vtc.xy ) : texture ( uTex1, vec2(vtc.x, 1.0f-vtc.y) );\n"
         "   if ( (uTexFlags & 0x04) != 0 ) {\n"
-        "		vec4 op2 = ((uTexFlags & 0x02)==0) ? texture ( uTex2, vtc.xy) : texture ( uTex2, vec2(vtc.x, 1.0f - vtc.y));\n"
-        "		outColor = vec4( op1.xyz * (1.0f - op2.w) + op2.xyz * op2.w, 1.0f );\n"
-        "   } else { \n"
-        "		outColor = vec4( op1.xyz, 1.0f );\n"
+        "        op2 = ((uTexFlags & 0x02)==0) ? texture ( uTex2, vtc.xy ) : texture ( uTex2, vec2(vtc.x, 1.0f-vtc.y) );\n"
+        "        op1 = vec4( op1.xyz * (1.0f - op2.w) + op2.xyz * op2.w, 1.0f );\n"
         "   }\n"
+        "   outColor = vec4( op1.xyz, 1.0f);\n"
         "}\n";
 
-    #define SHADRS   1
+    //-- texture array 2D shader
+    static const char* g_arr_vertshader =
+      "#version 300 es\n"
+      "#extension GL_ARB_explicit_attrib_location : enable\n"
+      "layout(location = 0) in vec3 vertex;\n"
+      "layout(location = 1) in vec3 normal;\n"
+      "layout(location = 2) in vec3 texcoord;\n"
+      "uniform vec4 uCoords;\n"
+      "uniform vec2 uScreen;\n"
+      "out vec3 vtc;\n"
+      "void main() {\n"
+      "   vtc = texcoord * 0.5f + 0.5f;\n"
+      "   gl_Position = vec4( -1.0f + (uCoords.x/uScreen.x) + (vertex.x+1.0f)*(uCoords.z-uCoords.x)/uScreen.x,\n"
+      "                       -1.0f + (uCoords.y/uScreen.y) + (vertex.y+1.0f)*(uCoords.w-uCoords.y)/uScreen.y,\n"
+      "                       0.0f, 1.0f );\n"
+      "}\n";
+    static const char* g_arr_fragshader =
+      "#version 300 es\n"
+      "  precision mediump float;\n"
+      "  precision mediump int;\n"
+      "uniform sampler2D uTex1;\n"
+      "uniform sampler2D uTex2;\n"
+      "uniform sampler2DArray uTex3;\n"
+      "uniform int uLayer;\n"
+      "uniform int uTexFlags;\n"
+      "in vec3 vtc;\n"
+      "layout(location = 0) out vec4 outColor;\n"
+      "void main() {\n"      
+      "   outColor = texture ( uTex3, vec3(vtc.xy, uLayer) ) ;\n"
+      "}\n";
+
+    #define SHADRS   2
         
     TexInterface gTex;              // global texture interface
 
@@ -413,8 +446,8 @@ void checkMem(xlong& total, xlong& used, xlong& app)
         char log[65536];
 
         // list of internal shaders
-        const char** vertcode[SHADRS] = { &g_tex_vertshader };
-        const char** fragcode[SHADRS] = { &g_tex_fragshader };
+        const char** vertcode[SHADRS] = { &g_tex_vertshader, &g_arr_vertshader };
+        const char** fragcode[SHADRS] = { &g_tex_fragshader, &g_arr_fragshader };
 
         // load each shader
         for (int n = 0; n < SHADRS; n++) {
@@ -451,6 +484,8 @@ void checkMem(xlong& total, xlong& used, xlong& app)
             // Get texture params
             gTex.utex1[n] = glGetUniformLocation(gTex.prog[n], "uTex1");
             gTex.utex2[n] = glGetUniformLocation(gTex.prog[n], "uTex2");
+            gTex.utex3[n] = glGetUniformLocation(gTex.prog[n], "uTex3");
+            gTex.ulayer[n] = glGetUniformLocation(gTex.prog[n], "uLayer");
             gTex.up0[n]   = glGetUniformLocation(gTex.prog[n], "uParam0");
             gTex.utexflags[n] = glGetUniformLocation(gTex.prog[n], "uTexFlags");
             gTex.ucoords[n] = glGetUniformLocation(gTex.prog[n], "uCoords");
@@ -524,56 +559,73 @@ void checkMem(xlong& total, xlong& used, xlong& app)
         // Prepare pipeline   
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
-        glDepthMask(GL_FALSE);
-        //checkGL ( "renderTex:prep", true );
+        glDepthMask(GL_FALSE);        
 
         // Get viewport dimensions (actual pixels)
         float screen[4];
-        glGetFloatv(GL_VIEWPORT, screen);
-        //checkGL ( "renderTex:get viewport", true );
+        glGetFloatv(GL_VIEWPORT, screen);       
 
-        glBindVertexArray(gTex.vbo[2]); 
-        //checkGL ( "renderTex:bind vert array", true );
-
-        int s = 0;      // shader #
-        glUseProgram(gTex.prog[s]);
-        //checkGL ( "renderTex:set shader", true );
-        
-        glActiveTexture(GL_TEXTURE0);
-        //checkGL("renderTexGL:activate tex0", true);
-        glBindTexture(GL_TEXTURE_2D, glid1);
-        ///checkGL("renderTexGL:bind texture", true);
-
+        glBindVertexArray(gTex.vbo[2]);
+        int s = 0;
+        glUseProgram(gTex.prog[s]);    
+        glActiveTexture(GL_TEXTURE0);        
+        glBindTexture(GL_TEXTURE_2D, glid1);        
         glUniform1i(gTex.utex1[s], 0);
-        //checkGL("renderTexGL:uniform utex1", true);
-
         glUniform4f(gTex.ucoords[s], x1, y1, x2, y2);                     // Select texture    
-        glUniform2f(gTex.uscreen[s], (float)screen[2], (float)screen[3]);
-        //checkGL("renderTexGL:uniforms", true);
-
+        glUniform2f(gTex.uscreen[s], (float)screen[2], (float)screen[3]);        
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
-        //checkGL ( "renderTex:enable vert attribs", true );       
-
         glBindBuffer(GL_ARRAY_BUFFER, gTex.vbo[0]);                     // Select VBO	
         glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(nvVertex), 0);
         glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(nvVertex), (void*)12);
         glVertexAttribPointer(2, 3, GL_FLOAT, false, sizeof(nvVertex), (void*)24);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gTex.vbo[1]);
-        //checkGL("renderTexGL:bind buffer", true);
-
         int flags = inv1;
         glUniform1i(gTex.utexflags[s], flags);    // inversion flag
-
         glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, 1);
-        //checkGL("renderTexGL:draw elems", true);
         
         glUseProgram(0);
-        //checkGL ("renderTexGL:clear shader", true);
         glDepthMask(GL_TRUE);
-
     }
+
+    void renderTexArrayGL(float x1, float y1, float x2, float y2, int texID, int layer)
+    {
+      // Prepare pipeline   
+      glDisable(GL_DEPTH_TEST);
+      glDisable(GL_CULL_FACE);
+      glDepthMask(GL_FALSE);
+
+      // Get viewport dimensions (actual pixels)
+      float screen[4];
+      glGetFloatv(GL_VIEWPORT, screen);
+
+      glBindVertexArray(gTex.vbo[2]);
+      int s = 1;    // <-- texture array shader
+      glUseProgram(gTex.prog[s]);
+      glActiveTexture(GL_TEXTURE0);
+      glEnable(GL_TEXTURE_2D_ARRAY);
+      glBindTexture(GL_TEXTURE_2D_ARRAY, texID);
+      glUniform1i(gTex.utex3[s], 0);
+      glUniform4f(gTex.ucoords[s], x1, y1, x2, y2);                     // Select texture    
+      glUniform2f(gTex.uscreen[s], (float)screen[2], (float)screen[3]);
+      glUniform1i(gTex.ulayer[s], layer );
+      glEnableVertexAttribArray(0);
+      glEnableVertexAttribArray(1);
+      glEnableVertexAttribArray(2);
+      glBindBuffer(GL_ARRAY_BUFFER, gTex.vbo[0]);                     // Select VBO	
+      glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(nvVertex), 0);
+      glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(nvVertex), (void*)12);
+      glVertexAttribPointer(2, 3, GL_FLOAT, false, sizeof(nvVertex), (void*)24);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gTex.vbo[1]);
+      int flags = 0;
+      glUniform1i(gTex.utexflags[s], flags);    // inversion flag
+      glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, 1);
+
+      glUseProgram(0);
+      glDepthMask(GL_TRUE);
+    }
+
     void compositeTexGL(float blend, int w, int h, int glid1, int glid2, char inv1, char inv2)
     {
         // Prepare pipeline   
@@ -599,7 +651,7 @@ void checkMem(xlong& total, xlong& used, xlong& app)
         glUniform1i(gTex.utex1[s], 0);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, glid2);
-        glUniform1i(gTex.utex2[s], 1);
+        glUniform1i(gTex.utex2[s], 1);        
         //checkGL("compositeTexGL::glBindTexture");
 
         glBindBuffer(GL_ARRAY_BUFFER, gTex.vbo[0]);                     // Select VBO	

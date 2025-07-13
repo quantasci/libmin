@@ -192,6 +192,7 @@
         HELPAPI void createTexGL(int& glid, int w, int h, int clamp = 0x812D, int fmt = 0x8058, int typ = 0x1401, int filter = 0x2601);	// defaults: GL_CLAMP_TO_BORDER, GL_RGBA8, GL_UNSIGNED_BYTE, GL_LINEAR
         HELPAPI void renderTexGL(int w, int h, int glid, char inv1 = 0);
         HELPAPI void renderTexGL(float x1, float y1, float x2, float y2, int glid1, char inv1 = 0);
+        HELPAPI void renderTexArrayGL(float x1, float y1, float x2, float y2, int glid1, int layer = 0);
         HELPAPI void compositeTexGL(float blend, int w, int h, int glid1, int glid2, char inv1 = 0, char inv2 = 0);		// composite two textures	
 
         struct HELPAPI TexInterface {
@@ -201,6 +202,8 @@
             int	vbo[3];
             int	utex1[3];
             int	utex2[3];
+            int	utex3[3];
+            int	ulayer[3];
             int	up0[3];
             int	utexflags[3];
             int	ucoords[3];
