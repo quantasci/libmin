@@ -82,7 +82,7 @@ CImageFormatTiff::CImageFormatTiff () : CImageFormat()
 //		m_num_strips		Number of strips
 //		m_rps				Rows per strip
 //
-bool CImageFormatTiff::Load (std::string filename, ImageX* img )
+bool CImageFormatTiff::Load (const std::string filename, ImageX* img )
 {
 	StartFormat ( filename, img, ImageOp::Loading );
 

@@ -232,11 +232,11 @@ std::string CImageFormat::GetStatusMsg ()
 	return msg;
 }
 
-void CImageFormat::StartFormat ( std::string filename, ImageX* img, ImageOp::FormatStatus status )
+void CImageFormat::StartFormat ( const std::string filename, ImageX* img, ImageOp::FormatStatus status )
 {
 	// set ImageFormat targets
 	m_pImg = img;
 	m_eStatus = status;
-        m_Filename = filename;
+	m_Filename = filename;
 }
 

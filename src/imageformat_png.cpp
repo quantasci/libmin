@@ -41,15 +41,15 @@ extern "C" {
    }
 }*/
 
-bool CImageFormatPng::Load (std::string filename, ImageX* img )
+bool CImageFormatPng::Load (const std::string filename, ImageX* img )
 {
 	StartFormat ( filename, img, ImageOp::Loading );
 
 	bool bGrey = false;
 
 	//-------------------------- Using PNG helpers
-        char fname[2048];
-        strncpy ( fname, filename.c_str(), 2048);
+	char fname[2048];
+    strncpy ( fname, filename.c_str(), 2048);
 	std::vector<unsigned char> out;
 	unsigned int nx, ny;
 	unsigned error = lodepng::decode( out, nx, ny, fname, (bGrey ? LCT_GREY : LCT_RGBA), (bGrey ? 16 : 8));

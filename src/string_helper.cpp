@@ -431,7 +431,6 @@ bool strParseOutDelim ( std::string str, std::string lseps, std::string rseps, s
   return true;
 }
 
-
 bool strParseOutStr (std::string str, std::string lstr, std::string rstr, std::string& outvalue, std::string& remain)
 {
   size_t f1, fL, fR;
@@ -616,66 +615,39 @@ float strToNum ( std::string str )
 
 bool strToVec(const std::string& str, char lsep, char insep, char rsep, float* vec, int vec_dim) 
 {
-  size_t l = str.find(lsep);
-  size_t r = str.find(rsep, l + 1);
-  if (l == std::string::npos || r == std::string::npos || r <= l + 1)
-    return false;
-
-  std::string content = str.substr(l + 1, r - l - 1);
-  std::istringstream ss(content);
-  std::string token;
-  int i = 0;
-
-  while (std::getline(ss, token, insep)) {
-    if (i >= vec_dim) return false; // Too many elements
-    // Trim whitespace
-    size_t start = token.find_first_not_of(" \t");
-    size_t end = token.find_last_not_of(" \t");
-    if (start == std::string::npos || end == std::string::npos)
-      return false;
-    token = token.substr(start, end - start + 1);
-    vec[i++] = std::strtof(token.c_str(), nullptr);
-  }
-
-  return (i == vec_dim); // False if too few elements
-}
-
-//---- OLD VERSION
-/* bool strToVec ( std::string& str, uchar lsep, uchar insep, uchar rsep, float* vec, int vec_dim )
-{
   size_t l, r, p;
   std::string key, vstr;
+  std::string src = str;
 
-  if ( !strParseKeyVal( str, lsep, rsep, key, vstr ) )
+  if (!strParseKeyVal(src, lsep, rsep, key, vstr))
     return false;
 
   vstr += insep;
   p = 0;
 
-  for (int i=0; i < vec_dim; i++ ) {
-    l = vstr.find_first_not_of ( insep, p );  if ( l == std::string::npos ) return false;
-    r = vstr.find_first_of ( insep, l );    if ( r == std::string::npos ) return false;
-    vec[i] = atof ( vstr.substr ( l, r-l ).c_str() );
+  for (int i = 0; i < vec_dim; i++) {
+    l = vstr.find_first_not_of(insep, p);  if (l == std::string::npos) return false;
+    r = vstr.find_first_of(insep, l);    if (r == std::string::npos) return false;
+    vec[i] = atof(vstr.substr(l, r - l).c_str());
     p = r;
   }
-  return true;
-} */
+}
 
-bool strToVec3 (const std::string& str, uchar lsep, uchar insep, uchar rsep, float* vec )
+bool strToVec3 (const std::string& str, char lsep, char insep, char rsep, float* vec )
 {
   return strToVec ( str, lsep, insep, rsep, vec, 3 );
 }
-bool strToVec4 (const std::string& str, uchar lsep, uchar insep, uchar rsep, float* vec )
+bool strToVec4 (const std::string& str, char lsep, char insep, char rsep, float* vec )
 {
   return strToVec ( str, lsep, insep, rsep, vec, 4 );
 }
-Vec3F strToVec3( const std::string str, uchar sep)
+Vec3F strToVec3( const std::string str, char sep)
 {
   Vec3F v;  
   strToVec ( str, '<', sep, '>', &v.x, 3);
   return v;
 }
-Vec4F strToVec4( const std::string str, uchar sep)
+Vec4F strToVec4( const std::string str, char sep)
 {
   Vec4F v;  
   strToVec(str, '<', sep, '>', &v.x, 4);

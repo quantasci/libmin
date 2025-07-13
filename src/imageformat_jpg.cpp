@@ -66,7 +66,7 @@ CImageFormatJpg::CImageFormatJpg ()
 	m_quality = 95;
 }
 
-bool CImageFormatJpg::Load ( char *filename, ImageX* img )
+bool CImageFormatJpg::Load ( const std::string filename, ImageX* img )
 {
 	StartFormat ( filename, img, ImageOp::Loading );
 

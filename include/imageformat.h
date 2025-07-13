@@ -35,15 +35,15 @@
 
 		// Interface functions (called by Image)	
 		virtual std::string UsesExt() { return ""; }
-		virtual bool Load (std::string filename, ImageX* img) {return false;}
-		virtual bool Save (std::string filename, ImageX* img) {return false;}		
+		virtual bool Load (const std::string filename, ImageX* img) {printf("ERROR: Load virtual.\n"); exit(-3); return false; }
+		virtual bool Save (const std::string filename, ImageX* img) {printf("ERROR: Save virtual.\n"); exit(-3); return false;}
 		virtual bool CanLoadType ( unsigned char* magic, std::string ext ) { return false; }
 		virtual bool CanSaveType ( std::string ext )		{ return false; }
 		virtual void SetQuality (int q)									{m_quality= q;}
 		virtual ImageOp::FormatStatus LoadIncremental () {return ImageOp::LoadNotReady;}		
 
 		// Helper functions 
-		void StartFormat ( std::string filename, ImageX* img, ImageOp::FormatStatus status );		
+		void StartFormat ( const std::string filename, ImageX* img, ImageOp::FormatStatus status );		
 		std::string GetStatusMsg ();
 		ImageOp::FormatStatus GetStatus ()	{ return m_eStatus; }
 

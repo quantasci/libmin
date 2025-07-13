@@ -26,8 +26,8 @@
 
 	class HELPAPI CImageFormatPng : public CImageFormat {
 	public:		
-		virtual bool Load (std::string filename, ImageX* img);
-		virtual bool Save (std::string filename, ImageX* img);
+		virtual bool Load (const std::string filename, ImageX* img);
+		virtual bool Save (const std::string filename, ImageX* img);
 
 		virtual std::string UsesExt() { return "png"; }
 
