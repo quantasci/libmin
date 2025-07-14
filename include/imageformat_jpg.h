@@ -46,11 +46,13 @@
 		{
 			if ((magic[0] == 0xD8 && magic[1] == 0xFF) || (magic[1] == 0xD8 && magic[0] == 0xFF)) return true;
 			if (ext.compare("jpg")==0) return true;
+      if (ext.compare("jpeg") == 0) return true;
 			return false;
 		}
 		virtual bool CanSaveType ( std::string ext )
 		{
 			if (ext.compare("jpg")==0) return true;
+      if (ext.compare("jpeg") == 0) return true;
 			return false;
 		}
 

@@ -205,25 +205,32 @@ void getFileParts(std::string fname, std::string& path, std::string& name, std::
         name = fname;
         ext = "";       // no extension
     }  
+    if (!path.empty() && path.back() != getPathDelim()) path += getPathDelim();
 }
 
-std::string fixPath (std::string path)
+// fixPath - fixes paths or filenames /w paths
+std::string fixPath (std::string str)
 {
+   if (str.empty()) return "";
+
   // replace slashes for current platform  
   size_t pos = 0;
   std::string from(1, getPathDelimOpposite());
   std::string to(1, getPathDelim());
-  while ((pos = path.find(from, pos)) != std::string::npos) {		// switch to platform path
-    path.replace(pos, from.length(), to);
+  while ((pos = str.find(from, pos)) != std::string::npos) {		// switch to platform path
+    str.replace(pos, from.length(), to);
     pos += to.length(); // Move past the replaced part
   }
 
-  // add terminal /
-  if (path.back() != getPathDelim()) {
-    path += getPathDelim();
+  if (str.find(".") != std::string::npos) {
+    // remove terminal / from files
+    if (str.back() == getPathDelim()) str.pop_back();  
+  } else {  
+    // add terminal / to paths
+    if (str.back() != getPathDelim()) str += getPathDelim();
   }
-
-  return path;
+  
+  return str;
 }
 
 

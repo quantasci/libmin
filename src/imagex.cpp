@@ -697,7 +697,7 @@ bool ImageX::Load ( std::string filename, std::string& errmsg)
 	// Try to load with each loader 	
 	//
 	std::string msg;
-	bool extmatch = false;
+	bool supported = false;
 	bool loaded = false;
 
 	// Get file parts
@@ -706,22 +706,19 @@ bool ImageX::Load ( std::string filename, std::string& errmsg)
 
 	for (int n=0; n < gImageFormats.size() && !loaded; n++) {
 		
-		if (fext.compare(gImageFormats[n]->UsesExt()) == 0) {
-			extmatch = true;
-			if (gImageFormats[n]->CanLoadType(magic, ffull)) {
-				if (gImageFormats[n]->Load(ffull, this)) {
-					// success
-					loaded = true;
-				}
-				else {
-					// loader was unable to load
-					errmsg = gImageFormats[n]->GetStatusMsg();
-					return false;
-				}
+	  if (gImageFormats[n]->CanLoadType(magic, fext)) {
+      supported = true;
+	    if (gImageFormats[n]->Load(ffull, this)) {
+			  // success
+				loaded = true;
+			}	else {
+        // error - loader was unable to load
+        errmsg = gImageFormats[n]->GetStatusMsg();
+				return false;
 			}
-		}
+		}		
 	}
-	if ( !extmatch ) {		// extension not supported
+	if ( !supported ) {		// extension not supported
 		errmsg = "Unsupported image extension ." + fext;
 		return false;
 	}

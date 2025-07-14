@@ -71,10 +71,12 @@ bool CImageFormatJpg::Load ( const std::string filename, ImageX* img )
 	StartFormat ( filename, img, ImageOp::Loading );
 
 	// Attempt to open file
+  char fname[2048];
+  strncpy(fname, filename.c_str(), 2048);
 #ifdef WIN32
-	fopen_s ( &m_jpeg_file, filename, "rb");
+	fopen_s ( &m_jpeg_file, fname, "rb");
 #else
-	m_jpeg_file = fopen ( filename, "rb");
+	m_jpeg_file = fopen ( fname, "rb");
 #endif
 
 	// Error opening (does not exist, etc.)
@@ -205,7 +207,7 @@ bool CImageFormatJpg::Load ( const std::string filename, ImageX* img )
 	return true;
 }
 
-bool CImageFormatJpg::Save ( char *filename, ImageX* img )
+bool CImageFormatJpg::Save ( const std::string filename, ImageX* img )
 {
 	StartFormat ( filename, img, ImageOp::Saving );
 
@@ -216,10 +218,13 @@ bool CImageFormatJpg::Save ( char *filename, ImageX* img )
 
 	// Open file for output
 	FILE* jpeg_file;
+  char fname[2048];
+  strncpy(fname, filename.c_str(), 2048);
+  
 #ifdef WIN32
-	fopen_s ( &jpeg_file, filename, "wb" );
+	fopen_s ( &jpeg_file, fname, "wb" );
 #else
-	jpeg_file = fopen ( filename, "rb");
+	jpeg_file = fopen ( fname, "rb");
 #endif
 	if ( jpeg_file == NULL) {		
 		return false;
