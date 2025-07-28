@@ -59,8 +59,7 @@ bool cuAvailable ()
 
 void dbgprintf(const char * fmt, ...)
 {
-  // get formatted print
-  char buf[2048];
+  // get formatted print  
   va_list  args;
   va_start (args, fmt);    
   
@@ -104,12 +103,12 @@ char getPathDelimOpposite()
 
 std::string addSearchPath ( const char* path )
 {
-  char pathbuf[2048];
-  strncpy ( pathbuf, path, 2048);
-  return addSearchPath ( std::string(pathbuf) );
+  if (!path) return "";  
+  return addSearchPath ( std::string(path) );
 }
 
-std::string addSearchPath(const std::string path)
+
+std::string addSearchPath(const std::string& path)
 { 
   if (path.empty()) return "";
 
@@ -124,10 +123,7 @@ std::string addSearchPath(const std::string path)
 
   // check for path existence  
   struct stat info;
-  char pathbuf[4096];
-  snprintf( pathbuf, sizeof(pathbuf), "%s", p.c_str() );
-  
-  if (stat(pathbuf, &info) == 0) {
+  if (stat(p.c_str(), &info) == 0) {
     gPaths.push_back(p);
     return p;
   } 
