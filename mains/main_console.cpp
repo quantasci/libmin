@@ -34,9 +34,9 @@ int main(int argc, char** argv)
         _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG | _CRTDBG_MODE_WNDW);
     #endif
 
-    pApp->startup();                        //-- App startup
+    pApp->startup();                    //-- App startup
     
-    pApp->appHandleArgs( argc, argv );    //-- App handles args
+    pApp->appHandleArgs(argc, argv);    //-- App handles args
     
     pApp->m_running = true;  
 

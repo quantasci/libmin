@@ -41,9 +41,9 @@ add_definitions ( -DLIBMIN_EXPORTS)		# we are building the libmin.dll. create ex
 add_definitions ( -DBUILD_PNG)			# always build PNG
 add_definitions ( -DBUILD_TIF)			# always build TIF
 
-_REQUIRE_GL ()
+_REQUIRE_GL (false)
 
-_REQUIRE_GLEW ()	       
+_REQUIRE_GLEW (false)
 
 _REQUIRE_OPENSSL (false)	            # default = false
 
@@ -126,7 +126,9 @@ endif()
 add_definitions(-DLIBHELP_EXPORTS)	# Export dll symbols
 
 # Set the library type
+
 OPTION (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
+
 set (LIB_TYPE STATIC)
 if (BUILD_SHARED_LIBS)
   set (LIB_TYPE SHARED)

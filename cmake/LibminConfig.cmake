@@ -178,8 +178,10 @@ endfunction()
 ###################################################################################
 # Include OpenGL 
 #
-function ( _REQUIRE_GL )
-    OPTION (BUILD_OPENGL "Build with OpenGL" ON)
+function ( _REQUIRE_GL use_gl_default )
+     
+    OPTION (BUILD_OPENGL "Build with OpenGL" ${use_gl_default} )
+
     if (BUILD_OPENGL)            
         message ( STATUS "  Searching for GL.." )
         find_package(OpenGL)
@@ -198,8 +200,10 @@ function ( _REQUIRE_GL )
     endif()
 endfunction()
 
-function ( _REQUIRE_GLEW)    
-    OPTION (BUILD_GLEW "Build with GLEW" ON)
+function ( _REQUIRE_GLEW use_glew_default )    
+
+    OPTION (BUILD_GLEW "Build with GLEW" ${use_glew_default} )
+
     if (BUILD_GLEW)
       include_directories("${LIBEXT_ROOT}/include")
       if (WIN32)        
@@ -312,6 +316,7 @@ endfunction()
 # Include TinyGLTF
 #   
 function ( _REQUIRE_GLTF )   
+
      set ( OK_H "0" )    
      set ( _gltf_srch "${LIBEXT_ROOT}/include/tinygltf/" )
 	_FIND_FILE ( GLTF_INC _gltf_srch "tiny_gltf.h" "" OK_H )		
