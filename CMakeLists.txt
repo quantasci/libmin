@@ -14,7 +14,7 @@ else()
   set(PROJNAME min)
   add_compile_options (-g)
   # set_source_files_properties (network_system.cpp PROPERTIES COMPILE_FLAGS -g)
-  add_compile_options (-Wno-multichar)
+  add_compile_options (-Wno-multichar -Wno-write-strings -Wno-return-type -Wno-register -Wno-attributes -Wno-format -Wno-stringop-overflow)
 endif()
 
 # add_compile_options (-O3)
