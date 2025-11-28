@@ -45,10 +45,10 @@
 	#define S__LINE__ S_(__LINE__)
 
 	#ifdef WIN32
-                #ifdef DEBUG_HEAP
-                        #define _CRTDBG_MAP_ALLOC
-                        #include <crtdbg.h>
-                #endif
+        #ifdef DEBUG_HEAP
+                #define _CRTDBG_MAP_ALLOC
+                #include <crtdbg.h>
+        #endif
 		#ifdef MEMORY_LEAKS_CHECK
 			#pragma message("Build will Check for Memory Leaks!")
 			#define _CRTDBG_MAP_ALLOC
@@ -71,7 +71,7 @@
 		#endif
 	#endif
 
-        #include <stdlib.h>
+    #include <stdlib.h>
 
 	
 
@@ -103,7 +103,7 @@
 		virtual void end() {}
 		virtual void checkpoint() {}
 	
-		#ifdef USE_NETWORK
+		#ifdef BUILD_NETWORK
 			virtual bool on_event( Event* e )  {return false;}			// Events
 			bool appSendEventToApp ( Event* e );
 		#endif	
@@ -174,7 +174,7 @@
 		inline float        getY() { return m_mouseY; }
 		inline float        getDX() { return m_dX; }
 		inline float        getDY() { return m_dY; }
-		inline int					getMSAA() { return m_cflags.MSAA; }
+		inline int			getMSAA() { return m_cflags.MSAA; }
 		inline bool			isFirstFrame()	{ return m_display_frame==0; }
 		inline int 			getDisplayFrame() { return m_display_frame; }
 

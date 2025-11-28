@@ -9,7 +9,7 @@
 #include <fstream>
 #include <algorithm>
 #include <string>
-#include "gxlib.h"
+
 #include "main.h"
 
 // console app includes 

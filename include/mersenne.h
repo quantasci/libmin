@@ -21,7 +21,10 @@
 
 	#include "common_defs.h"
 	#include "vec.h"
-	#include "quaternion.h"
+
+  #ifdef BUILD_QUATERNION
+    #include "quaternion.h"
+  #endif
 
 	#define __STDC_LIMIT_MACROS
 	#include <stdint.h>
@@ -50,7 +53,10 @@
 		Vec3F	randV3(Vec3F vmin, Vec3F vmax);
 		Vec4F	randV4(float vmin, float vmax);		
 		Vec4F	randV4(Vec4F vmin, Vec4F vmax);
-		Quaternion	randQ();
+
+    #ifdef BUILD_QUATERNION
+		  Quaternion	randQ();
+    #endif
 	
 	private:
 		uint32_t MT[ MT_SIZE ] = {0};

@@ -446,7 +446,7 @@
 		Vec4F (const Vec3F &op);
 		Vec4F (const Vec3F &op, const float opw);
 		Vec4F (const Vec4F &op);
-		Vec4F (const Vec4D &op);
+		Vec4F (const Vec4D &op);		
 		Vec4F (const Quaternion& op);    
 
 		// Member Functions
@@ -733,7 +733,7 @@
 		Matrix4F &operator= (const int c);
 		Matrix4F &operator= (const double c);				
 		Matrix4F &operator= (const float* op);
-    Matrix4F &operator= (const double* op);
+        Matrix4F &operator= (const double* op);
 		Matrix4F &operator=  (const Matrix4F& op);		// copy
 		
 		Matrix4F &operator+= (const unsigned char c);

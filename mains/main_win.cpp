@@ -1,9 +1,9 @@
 
-#ifdef USE_NETWORK
+#ifdef BUILD_NETWORK
     #include "network_system.h"
 #endif
 
-#ifdef USE_OPENGL
+#ifdef BUILD_OPENGL
     #include <GL/glew.h>
     #include <GL/wglew.h>
 #endif
@@ -581,7 +581,7 @@ bool Application::appStartWindow (void* arg1, void* arg2, void* arg3, void* arg4
     if ( m_win->_hWnd == NULL)
         return false;
 
-    #ifdef USE_OPENGL
+    #ifdef BUILD_OPENGL
         //-- Create OpenGL context
         appCreateGL(&m_cflags, m_winSz[0], m_winSz[1]);       
 
@@ -589,17 +589,16 @@ bool Application::appStartWindow (void* arg1, void* arg2, void* arg3, void* arg4
            
     #endif
 
-        // Show the OS Window
-        ShowWindow(m_win->_hWnd, SW_SHOW);
-        appSwapInterval(0);       // vsync off
-
     //-- App init (ONCE)
     if (m_startup) {                // Call user init() only ONCE per application
         m_startup = false;
         dbgprintf("  init()\n");
         if (!init()) { dbgprintf("ERROR: Unable to init() app.\n"); return false; }
-    }       
-    
+    }     
+
+    // Show the OS Window
+    ShowWindow(m_win->_hWnd, SW_SHOW);
+    appSwapInterval(0);       // vsync off    
 
     // Activate (starts glSwapBuffers)
     if (!activate(pApp->m_winSz[0], pApp->m_winSz[1])) { dbgprintf("ERROR: Activate failed.\n"); return false; }
@@ -646,7 +645,7 @@ void Application::appUpdateMouse(float mx, float my, AppEnum button, AppEnum sta
 
 bool Application::appStopWindow()
 {
-    #ifdef USE_OPENGL
+    #ifdef BUILD_OPENGL
         // Cleanup OpenGL
         wglDeleteContext( m_win->_hRC);
         ReleaseDC( m_win->_hWnd, m_win->_hDC);
@@ -740,7 +739,7 @@ void Application::appOpenBrowser ( std::string app, std::string query )
     // m_shellprocess = ShExecInfo.hProcess;		// record the process so we can kill it in future
 }
 
-#ifdef USE_NETWORK
+#ifdef BUILD_NETWORK
 
     bool Application::appSendEventToApp ( Event* e )
     {
@@ -838,7 +837,7 @@ bool Application::isActive()
 
 void Application::appSwapInterval(int i)
 {
-    #ifdef USE_OPENGL
+    #ifdef BUILD_OPENGL
         wglSwapIntervalEXT(i);
     #endif
 }
@@ -851,7 +850,7 @@ void Application::appSetKeyPress(int key, bool state)
 
 bool Application::appInitGL()
 {    
-    #ifdef USE_OPENGL
+    #ifdef BUILD_OPENGL
         // additional opengl initialization
         //  (primary init of opengl occurs in WINinteral::initBase)
         initBasicGL();
@@ -862,14 +861,16 @@ bool Application::appInitGL()
     return true;
 }
 
-#include "imagex.h"
+#ifdef BUILD_IMAGE
+  #include "imagex.h"
+#endif
 
-// from file_png.cpp
-extern void save_png(char* fname, unsigned char* img, int w, int h, int ch);
+  // from file_png.cpp
+  extern void save_png(char* fname, unsigned char* img, int w, int h, int ch);
 
 
 
-#ifdef USE_OPENGL
+#ifdef BUILD_OPENGL
 
     static int stringInExtensionStringGL (const char* string, const char* exts)
     {
@@ -967,8 +968,6 @@ extern void save_png(char* fname, unsigned char* img, int w, int h, int ch);
             dbgprintf("ARB_DEBUG: %s - %s : %s\n", strSource, strType, message);
         }
     }
-
-    //PFNWGLGETPIXELFORMATATTRIBIVARBPROC wglGetPixelFormatAttribivARB = nullptr;
 
     bool Application::appCreateGL(const Application::ContextFlags* cflags, int& width, int& height)
     {
@@ -1164,10 +1163,14 @@ void Application::appSaveFrame(char* fname)
     }
 
 
-    ImageX img;
-    img.Create ( w, h, ImageOp::RGB8 );
-    img.TransferData ( (char*) pixbuf );
-    img.Save ( fname );
+    #ifdef BUILD_IMAGE
+      ImageX img;
+      img.Create ( w, h, ImageOp::RGB8 );
+      img.TransferData ( (char*) pixbuf );
+      img.Save ( fname );
+    #else
+      dbgprintf ( "ERROR: appSaveFrame did not save. Rebuild with BUILD_IMAGE support.\n");
+    #endif
 
     free(pixbuf);
     free(buf);

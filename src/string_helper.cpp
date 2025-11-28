@@ -21,9 +21,8 @@
 
 #include "vec.h"
 #include "string_helper.h"
-#ifdef USE_TIMEX
-  #include "timex.h"
-#endif
+#include "timex.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -631,6 +630,8 @@ bool strToVec(const std::string& str, char lsep, char insep, char rsep, float* v
     vec[i] = atof(vstr.substr(l, r - l).c_str());
     p = r;
   }
+
+  return true;
 }
 
 bool strToVec3 (const std::string& str, char lsep, char insep, char rsep, float* vec )

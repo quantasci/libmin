@@ -154,8 +154,8 @@
     HELPAPI char getPathDelim();
     HELPAPI char getPathDelimOpposite();
     HELPAPI std::vector<std::string>& getGlobalPaths ();
-    HELPAPI std::string addSearchPath ( const char* path );
-    HELPAPI std::string addSearchPath ( const std::string& path);
+    HELPAPI void addSearchPath ( const char* path );
+    HELPAPI void addSearchPath ( const std::string& path);
     HELPAPI std::string fixPath ( std::string path );
     HELPAPI bool getFileLocation ( const char* filename, char* outpath );
     HELPAPI bool getFileLocation ( const char* filename, char* outpath, std::vector<std::string> paths );
@@ -170,7 +170,7 @@
     
 
     //--- OpenGL 
-    #ifdef USE_OPENGL
+    #ifdef BUILD_OPENGL
     
         #if defined(__ANDROID__)
             #include <EGL/egl.h>
@@ -266,9 +266,9 @@
     #endif
 
 	// math defs
-    /* #ifndef PI        // note: can conflict with PI in other lib namespaces
+    #ifndef PI
         #define PI					(3.14159265358979f)			// sometimes useful :)
-    #endif */
+    #endif
     #ifndef DEGtoRAD
 	    #define DEGtoRAD			(3.14159265358979f/180.0f)
     #endif

@@ -159,14 +159,17 @@ Vec4F Mersenne::randV4(Vec4F vmin, Vec4F vmax)
                     vmin.w + float(randI() * (vmax.w - vmin.w)) / I32_MAX);
 }
 
+#ifdef BUILD_QUATERNION
 
-Quaternion Mersenne::randQ()
-{
-    Quaternion q;
-    q.set ( float(randI()) / I32_HALFMAX - 1.0f,
-            float(randI()) / I32_HALFMAX - 1.0f,
-            float(randI()) / I32_HALFMAX - 1.0f,
-            float(randI()) / I32_HALFMAX - 1.0f );
-    q.normalize();
-    return q;
-}
+  Quaternion Mersenne::randQ()
+  {
+      Quaternion q;
+      q.set ( float(randI()) / I32_HALFMAX - 1.0f,
+              float(randI()) / I32_HALFMAX - 1.0f,
+              float(randI()) / I32_HALFMAX - 1.0f,
+              float(randI()) / I32_HALFMAX - 1.0f );
+      q.normalize();
+      return q;
+  }
+
+#endif

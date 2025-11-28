@@ -483,7 +483,7 @@ void Camera3D::setModelMatrix ( Matrix4F& model )
 	model_matrix = model;
 	mv_matrix = model;
 	mv_matrix *= view_matrix;
-	#ifdef USE_DX
+	#ifdef BUILD_DX
 
 	#else
 		glLoadMatrixf ( mv_matrix.GetDataF() );
@@ -514,7 +514,7 @@ Vec3F Camera3D::inverseRay (float x, float y, float xres, float yres, float z)
 	float tu, tv;
 	tu = mTile.x + x * (mTile.z-mTile.x) / xres;		// *NOTE*. If mXres=0 you must call cam.setSize(w,h) with screen res.
 	tv = mTile.y + y * (mTile.w-mTile.y) / yres;
-	Vec4F pnt ( (tu-0.5f)*2.0*sx , (0.5f-tv)*2.0*sy, -z, 1 );
+	Vec4F pnt ( (tu-0.5f)*2.0*sx , (0.5f-tv)* 2.0 * sy, -z, 1 );
 	// x = 2*near/sx
 	// y = 2*near/sy;
 

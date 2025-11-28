@@ -50,7 +50,7 @@ std::vector<std::string>& getGlobalPaths()
 bool cuAvailable ()
 {
   // indicate if CUDA was built with libmin
-	#ifdef USE_CUDA
+	#ifdef BUILD_CUDA
 		return true;
 	#else
 		return false;
@@ -77,6 +77,7 @@ void dbgprintf(const char * fmt, ...)
       /* vsnprintf ( buf, sizeof(buf), fmt, args);
       va_end(args);
       std::string str;
+      char buf[2048];
       for (int n=0; n < strlen(buf); n++) {
         if (buf[n]=='\n') str += "\r\n"; else str += buf[n];
       }            
@@ -101,16 +102,17 @@ char getPathDelimOpposite()
     #endif
 }
 
-std::string addSearchPath ( const char* path )
+void addSearchPath ( const char* path )
 {
-  if (!path) return "";  
-  return addSearchPath ( std::string(path) );
+  if (path==0x0) return;
+  std::string pathstr = path;
+  ::addSearchPath ( pathstr );
 }
 
 
-std::string addSearchPath(const std::string& path)
+void addSearchPath(const std::string& path)
 { 
-  if (path.empty()) return "";
+  if (path.empty()) return;
 
   // replace to match platform
   std::string p = path;
@@ -123,11 +125,9 @@ std::string addSearchPath(const std::string& path)
 
   // check for path existence  
   struct stat info;
-  if (stat(p.c_str(), &info) == 0) {
+  if (stat(p.c_str(), &info) == 0) {    
     gPaths.push_back(p);
-    return p;
-  } 
-  return "";
+  }   
 }
 
 
@@ -144,9 +144,9 @@ bool getFileLocation ( const char* filename, char* outpath, std::vector<std::str
         found = true;
         strcpy ( outpath, filename );
     } else {
-        for (int i=0; i < searchPaths.size(); i++) {
+        for (int i=0; i < searchPaths.size(); i++) {            
             if (searchPaths[i].empty() ) continue;
-            sprintf ( outpath, "%s%s", searchPaths[i].c_str(), filename );
+            sprintf ( outpath, "%s%s", searchPaths[i].c_str(), filename );            
             fp = fopen( outpath, "rb" );
             if (fp)	{ found = true;	break; }
         }
@@ -296,7 +296,7 @@ void checkMem(xlong& total, xlong& used, xlong& app)
 
 //------------------------------------------------------------- OPENGL
 //
-#ifdef USE_OPENGL
+#ifdef BUILD_OPENGL
     
   
     const char * glErrorString(GLenum const err) 

@@ -21,7 +21,10 @@
 
 
 #include "vec.h"
-#include "quaternion.h"
+
+#ifdef BUILD_QUATERNION
+  #include "quaternion.h"
+#endif
 
 #undef VTYPE
 #define VTYPE	float
@@ -490,6 +493,7 @@ Vec3F Vec3F::operator* (const Matrix4F &op)
 					 x*op.data[1] + y*op.data[5] + z*op.data[9] + op.data[13],
 					 x*op.data[2] + y*op.data[6] + z*op.data[10] + op.data[14] );
 }
+#ifdef BUILD_QUATERNION
 // transform vector by a quaternion
 Vec3F Vec3F::operator* (const Quaternion& op)
 {
@@ -514,6 +518,7 @@ Vec3F& Vec3F::operator*= (const Quaternion& op)
 	(*this) = q;
 	return (*this);
 }
+#endif
 
 #undef VTYPE
 #undef VNAME
@@ -531,7 +536,9 @@ Vec4F::Vec4F (const Vec3F &op) {x=(VTYPE) op.x; y=(VTYPE) op.y; z=(VTYPE) op.z; 
 Vec4F::Vec4F (const Vec3F &op, const float opw) {x=(VTYPE) op.x; y=(VTYPE) op.y; z=(VTYPE) op.z; w=(VTYPE) opw;}
 Vec4F::Vec4F (const Vec4F &op) {x=(VTYPE) op.x; y=(VTYPE) op.y; z=(VTYPE) op.z; w=(VTYPE) op.w;}
 Vec4F::Vec4F (const Vec4D &op) {x=(VTYPE) op.x; y=(VTYPE) op.y; z=(VTYPE) op.z; w=(VTYPE) op.w;}
-Vec4F::Vec4F (const Quaternion& op) {x=op.X; y=op.Y; z=op.Z; w=op.W; }
+#ifdef BUILD_QUATERNION
+  Vec4F::Vec4F (const Quaternion& op) {x=op.X; y=op.Y; z=op.Z; w=op.W; }
+#endif
 
 // Member Functions
 Vec4F &Vec4F::operator= (const int op) {x= (VTYPE) op; y= (VTYPE) op; z= (VTYPE) op; w = (VTYPE) op; return *this;}
@@ -689,13 +696,11 @@ double Vec4D::Length (void) { double n; n = (double) x*x + (double) y*y + (doubl
 
 // Constructors/Destructors
 
-
 Matrix4F::Matrix4F (const float* mat)
 {
   for (int n = 0; n < 16; n++)
     data[n] = mat[n];  
 }
-
 Matrix4F::Matrix4F ( float f0, float f1, float f2, float f3, 
 							float f4, float f5, float f6, float f7, 
 							float f8, float f9, float f10, float f11,
@@ -1070,6 +1075,7 @@ Matrix4F &Matrix4F::Scale (double sx, double sy, double sz)
 }
 
 // M' = Tpos R S Tpiv  - transform used by shapes
+#ifdef BUILD_QUATERNION
 Matrix4F& Matrix4F::TRST ( Vec3F pos, Quaternion r, Vec3F s, Vec3F piv )
 {
 	// quaternion rotation. efficient: m = q.getMatrix(), only 9 elements
@@ -1116,7 +1122,7 @@ Matrix4F& Matrix4F::ReverseTRS(Vec3F& pos, Quaternion& quat, Vec3F& scal)
 	quat.normalize();
 	return *this;
 }
-
+#endif
 
 Matrix4F &Matrix4F::normalizedBasis (const Vec3F &fwd)
 {

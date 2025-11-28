@@ -28,7 +28,7 @@
 	#	define __stdcall /* no __stdcall stuff on non-Windows platforms. */
 	#endif
 
-	#ifdef USE_NVTX
+	#ifdef BUILD_NVTX
 		typedef int ( __stdcall *nvtxRangePushFunc)(const char* msg);
 		typedef int ( __stdcall *nvtxRangePopFunc)(void);
 	#endif
